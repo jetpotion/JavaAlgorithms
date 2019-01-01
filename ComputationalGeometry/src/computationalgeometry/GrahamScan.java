@@ -31,6 +31,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 /**
@@ -67,44 +69,11 @@ public class GrahamScan extends Application {
             Point2D newPoint = new Point2D((double)numberargument[0],(double)numberargument[1]);
             polygoninput[i] = newPoint; i++;
           } 
-         
+         points = Arrays.copyOf( polygoninput,polygoninput.length);
         
           
         
-          points  = Arrays.copyOf(polygoninput,polygoninput.length);
-
-            Comparator<Point2D> comparable = (Point2D a, Point2D b) -> {
-            Point2D lowest = returnlowestPoint(points);
-            if (a == b || a.equals(b)) {
-                return 0;
-            }
-
-            // use longs to guard against int-underflow
-            double thetaA = Math.atan2((long) a.getY() - lowest.getY(), (long) a.getX() - lowest.getX());
-            double thetaB = Math.atan2((long) b.getY() - lowest.getY(), (long) b.getX() - lowest.getX());
-
-            if (thetaA < thetaB) {
-                return -1;
-            } else if (thetaA > thetaB) {
-                return 1;
-            } else {
-
-                double distanceA = Math.sqrt((((long) lowest.getX() - a.getX()) * ((long) lowest.getX() - a.getX()))
-                        + (((long) lowest.getY() - a.getY()) * ((long) lowest.getY() - a.getY())));
-                double distanceB = Math.sqrt((((long) lowest.getX() - b.getX()) * ((long) lowest.getX() - b.getX()))
-                        + (((long) lowest.getY() - b.getY()) * ((long) lowest.getY() - b.getY())));
-
-                if (distanceA < distanceB) {
-                    return -1;
-                } else if (distanceA > distanceB) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-
-        };
-        Arrays.sort(points, comparable);
+        
         //    System.out.println(Arrays.toString(points));
        
 
@@ -132,7 +101,10 @@ public class GrahamScan extends Application {
      */
 
     public static Stack<Point2D> createConvexhull(Group pane, Point2D[] points) throws Exception {
-
+        
+        
+        
+        Arrays.sort(points,polarorder(points));
         Stack<Point2D> Convexhull = new Stack<>();
         Convexhull.push(points[0]);
         Convexhull.push(points[1]);
@@ -277,10 +249,10 @@ public class GrahamScan extends Application {
     /**
      * assume points are already sorted by polar angle * 
      */
-    public static void loadPoints(Group group , Point2D[] points, Pane pane, Button button, Button newinput) {
+    public static void loadPoints(Group group , Point2D[] pointX, Pane pane, Button button, Button newinput) {
         pane.setPrefSize(1000,900);
 
-        for (Point2D point : points) {
+        for (Point2D point : pointX) {
             Circle circle = new Circle(point.getX(), point.getY(), 8, Paint.valueOf("#DC143C"));
             Tooltip tooltip = new Tooltip(circle.getCenterX() + "," + circle.getCenterY());
             Tooltip.install(circle, tooltip);
@@ -300,9 +272,28 @@ public class GrahamScan extends Application {
             }
 
         }
+                
         );
+        newinput.setOnAction((event)->{
+            convexhulloutput.setText("");
+            try {
+                group.getChildren().clear();
+                takeinputs();
+                
+                for (Point2D point : points) {
+                    Circle circle = new Circle(point.getX(), point.getY(), 8, Paint.valueOf("#DC143C"));
+                    Tooltip tooltip = new Tooltip(circle.getCenterX() + "," + circle.getCenterY());
+                    Tooltip.install(circle, tooltip);
+                    group.getChildren().add(circle);
+                }
+                
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(GrahamScan.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
-    public Comparator <Point2D> polarorder(Point2D[] points )
+    public  static Comparator <Point2D> polarorder(Point2D[] points )
     {
          Comparator<Point2D> comparable = (Point2D a, Point2D b) -> {
             Point2D lowest = returnlowestPoint(points);
@@ -337,5 +328,37 @@ public class GrahamScan extends Application {
         };
         return comparable;
     }
-
+    public static void takeinputs() throws FileNotFoundException
+    {
+        FileChooser  newinputs  = new FileChooser();
+        
+        newinputs.setInitialDirectory(new File("C:\\Users\\William Zhang\\Documents\\NetBeansProjects\\ComputationalGeometry"));
+        newinputs.setSelectedExtensionFilter(new ExtensionFilter("TxT files", "*.txt"));
+          
+          File fileinput = newinputs.showOpenDialog(null);
+         if(fileinput != null)
+         {
+          Scanner filereader = new Scanner(fileinput);
+          Point2D[] polygoninput = new Point2D [Integer.parseInt(filereader.nextLine())]; int i = 0;
+          while(filereader.hasNextLine()) { 
+            String newline = filereader.nextLine(); 
+            String replacedline  = newline.replaceAll("\\[","").replaceAll("\\]","").replaceAll("\n",""); 
+            String [] potentialnumbers =  replacedline.split(","); 
+             int [] numberargument = new int [2];
+             for(int x = 0 ; x < potentialnumbers.length; x++) 
+             { 
+                 
+                 numberargument[x] = Integer.parseInt( potentialnumbers[x]);
+             }
+            Point2D newPoint = new Point2D((double)numberargument[0],(double)numberargument[1]);
+            polygoninput[i] = newPoint; i++;
+          } 
+         
+        
+          
+        
+          points  = Arrays.copyOf(polygoninput,polygoninput.length);
+          
+    }
+    }
 }
