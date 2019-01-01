@@ -280,17 +280,18 @@ public class GrahamScan extends Application {
                 group.getChildren().clear();
                 takeinputs();
                 
-                for (Point2D point : points) {
-                    Circle circle = new Circle(point.getX(), point.getY(), 8, Paint.valueOf("#DC143C"));
-                    Tooltip tooltip = new Tooltip(circle.getCenterX() + "," + circle.getCenterY());
-                    Tooltip.install(circle, tooltip);
-                    group.getChildren().add(circle);
-                }
+                
                 
                 
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(GrahamScan.class.getName()).log(Level.SEVERE, null, ex);
             }
+            for (Point2D point : points) {
+                    Circle circle = new Circle(point.getX(), point.getY(), 8, Paint.valueOf("#DC143C"));
+                    Tooltip tooltip = new Tooltip(circle.getCenterX() + "," + circle.getCenterY());
+                    Tooltip.install(circle, tooltip);
+                    group.getChildren().add(circle);
+                }
         });
     }
     public  static Comparator <Point2D> polarorder(Point2D[] points )
