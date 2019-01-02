@@ -14,6 +14,7 @@ import java.util.Scanner;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -22,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -34,11 +34,10 @@ import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
- * @author William Zhang
- * @ID: 110768508
  * @Email: William Zhang
  */
 public class GrahamScan extends Application {
@@ -128,6 +127,7 @@ public class GrahamScan extends Application {
             //   System.out.println(x + " " + Convexhull.toString());
             while (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) < 0) {
                 Convexhull.pop();
+                
             }
             if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) == 0) {
                 Convexhull.pop();
@@ -142,9 +142,11 @@ public class GrahamScan extends Application {
             Point2D endingpoint = Convexhull.get(x + 1);
 
             Line convexhullline = new Line(startingpoint.getX(), startingpoint.getY(), endingpoint.getX(), endingpoint.getY());
-
             convexhullline.setStroke(Color.RED);
+            slowlyadd(convexhullline);
             pane.getChildren().add(convexhullline);
+           
+           
             
 
         }
@@ -153,6 +155,11 @@ public class GrahamScan extends Application {
         Line convexhullline = new Line(lastpoint.getX(), lastpoint.getY(), firstpoint.getX(), firstpoint.getY());
         convexhullline.setStroke(Color.RED);
         pane.getChildren().add(convexhullline);
+        
+        
+        
+        
+        
         for (Iterator<Node> it = pane.getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
             if (node instanceof Circle) {
@@ -193,7 +200,8 @@ public class GrahamScan extends Application {
         firststack.pop();
         return firststack.peek();
 
-    }
+    } 
+    
 
     /**
      * @param a is the point next to stack 
@@ -361,5 +369,17 @@ public class GrahamScan extends Application {
           points  = Arrays.copyOf(polygoninput,polygoninput.length);
           
     }
+    }
+    public static void  slowlyadd(final Node Line) throws InterruptedException
+    {
+        final FadeTransition fade = new FadeTransition( Duration.millis(3000));
+        
+        fade.setNode(Line);
+        fade.setFromValue(0.0);
+        fade.setToValue(1.0);
+        fade.setAutoReverse(true);
+        
+        fade.play();
+         
     }
 }
