@@ -16,26 +16,37 @@ public class CircularLinkedlist<T extends Comparable <T>> implements Iterator {
     private Node head;
     private Node cursor;
     private Node tail;
+    private int size; 
     public CircularLinkedlist(T [] array)
     {
         
     }
     public void add(Node type)
     {
-        
+        /** Case 1  the list is empty **/
+        if(head == null)
+        {
+            head =  type;
+            tail = type;
+            head.setNext(tail);
+            head.setPrevious(tail);
+            tail.setNext(head);
+            tail.setPrevious(head);
+            cursor = head ;
+            size++;
+        }
     }
     
     @Override
     public boolean hasNext() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return head == null;
     }
 
     @Override
     public Object next() {
         
-        
-        
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return cursor.getNext();
+       
     }
    
 }
