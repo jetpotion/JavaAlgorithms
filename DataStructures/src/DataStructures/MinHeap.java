@@ -58,7 +58,8 @@ public class MinHeap <T extends Comparable <T>> {
          if(leftchild != size &&
             heap[leftchild].compareTo(heap[rightchild]) > 0)leftchild++;
 
-         if(tmp.compareTo(heap[leftchild]) > 0)  heap[k] = heap[leftchild];
+         if(tmp.compareTo(heap[leftchild]) > 0) 
+             heap[k] = heap[leftchild];
          else
                 break;
       }
@@ -100,7 +101,7 @@ public class MinHeap <T extends Comparable <T>> {
 	}
 
  /**
-  * Inserts a new item
+  * Inserts a new item into the heap 
   */
    public void insert(T x)
    {
@@ -115,6 +116,54 @@ public class MinHeap <T extends Comparable <T>> {
 
       heap[pos] = x;
    }
+   /** 
+    * ChangeKey will replace old key entry with the new key entry. 
+    * Only suggested for ordered tuples otherwise use the overloaded method if you know the location of the old key
+    * @param oldkey is the old value that we search 
+    * @param newKey is the new value that we wish to update
+    */
+   public void ChangeKey(T oldkey, T newKey)
+   {
+        
+       /** standard binary search   of oldkey to check to see if the index exist otherwise**/
+         int  i = Arrays.binarySearch(heap,oldkey);
+         if(i < size || i > 0)
+         {
+             /** Check to see if the value  of newkey is less than the newkey **/
+             if(oldkey.compareTo(newKey) > 0)
+             {
+                  if(i == 1)
+                      /** if old value was in the root and value was even less than this is the new global minimum **/
+                      heap[i] = newKey;
+                  /**All we need to do is percolate up to restore heap**/
+                  else 
+                  {
+                      heap[i] = newKey;
+                      for(; i > 1 && heap[i].compareTo(heap[i/2])< 0; i= i/2)
+                      {
+                          heap[i] =  heap[i/2];
+                      }
+                  }
+             }
+              /**This is accounting for the value of the newkey is greater than the oldkey **/
+             else 
+             {
+                 if(i == 1)
+                 {   heap[i] = newKey; 
+                     percolatingDown(1);}
+                 else 
+                 {
+                     heap[i] = newKey;
+                     percolatingDown(i);
+                 }
+             }
+  
+         }
+         else 
+         {
+             throw new IndexOutOfBoundsException("Oldkey does not exist ");
+         }
+   }
    private void doubleSize()
    {
       T [] old = heap;
@@ -127,6 +176,10 @@ public class MinHeap <T extends Comparable <T>> {
       String output = "";
       for(int k = 1; k <= size; k++) output += heap[k]+" ";
       return output ;
+   }
+   public T peek()
+   {
+       return heap[1];
    }
     public static void main(String [] args) throws Exception
     {
