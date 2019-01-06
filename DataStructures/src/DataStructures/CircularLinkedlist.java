@@ -17,24 +17,48 @@ public class CircularLinkedlist<T extends Comparable <T>> implements Iterator {
     private Node cursor;
     private Node tail;
     private int size; 
-    public CircularLinkedlist(T [] array)
+    /**
+     * AddHead will add  the data before the head and not after;
+     * @param type any comparable type 
+     */
+    public void addAtHead(T type)
     {
-        
-    }
-    public void add(Node type)
-    {
-        /** Case 1  the list is empty **/
+
         if(head == null)
         {
-            head =  type;
-            tail = type;
+            
+            Node type1 = new Node(type);
+            head =  type1;
+            tail = type1;
             head.setNext(tail);
             head.setPrevious(tail);
             tail.setNext(head);
             tail.setPrevious(head);
-            cursor = head ;
             size++;
         }
+        /**The case for when the linkedlist is off size 1 **/
+        
+        else if(size == 1)
+        {
+            Node newtype = new Node(type);
+            newtype.setNext(head);
+            newtype.setPrevious(tail);
+            head = newtype;
+            tail.setPrevious(head);
+            tail.setNext(head);
+            size++;
+        }
+        else
+        {
+            Node newtype = new Node(type );
+            newtype.setNext(head);
+            newtype.setPrevious(tail);
+            head.setPrevious(newtype);
+            head = newtype;
+            tail.setNext(head);
+            size++;
+        }
+        
     }
     
     @Override
