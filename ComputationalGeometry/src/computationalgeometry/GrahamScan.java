@@ -131,19 +131,22 @@ public class GrahamScan extends Application {
             //   System.out.println(x + " " + Convexhull.toString());
             while (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) < 0) {
                 Convexhull.pop();
+                 determinePointOnHull(Convexhull,pane);
                 
             }
             if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) == 0) {
                 Convexhull.pop();
                 Convexhull.push(points[x]);
+                 determinePointOnHull(Convexhull,pane);
             } else if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) == 1) {
                 Convexhull.push(points[x]);
+                determinePointOnHull(Convexhull,pane);
             }
 
         }
             final IntegerProperty i = new SimpleIntegerProperty(0);
             Timeline timeline = new Timeline(new KeyFrame(
-             Duration.seconds(1),
+             Duration.millis(500),
                 event -> {
             Point2D startingpoint = Convexhull.get(i.get());
             Point2D endingpoint = Convexhull.get(i.get() + 1);
@@ -152,24 +155,22 @@ public class GrahamScan extends Application {
             convexhullline.setStroke(Color.RED);
              pane.getChildren().add(convexhullline);
              i.set(i.get()+1);
-         
-            
                      } 
                 )
             );
             timeline.setCycleCount(Convexhull.size() - 1);
             timeline.play();
-        Point2D lastpoint = Convexhull.lastElement();
-        Point2D firstpoint = Convexhull.firstElement();
-        Line hullline = new Line(lastpoint.getX(), lastpoint.getY(), firstpoint.getX(), firstpoint.getY());
-        hullline.setStroke(Color.RED);
-        pane.getChildren().add(hullline);
+            Point2D lastpoint = Convexhull.lastElement();
+            Point2D firstpoint = Convexhull.firstElement();
+            Line hullline = new Line(lastpoint.getX(), lastpoint.getY(), firstpoint.getX(), firstpoint.getY());
+            hullline.setStroke(Color.RED);
+            pane.getChildren().add(hullline);
         
         
         
         
         
-        determinePointOnHull(Convexhull,pane);
+       
        
         String[] newconvexhull = new String [Convexhull.size()];
         int x = 0;
@@ -360,7 +361,7 @@ public class GrahamScan extends Application {
     {
         FileChooser  newinputs  = new FileChooser();
         
-        newinputs.setInitialDirectory(new File("C:\\Users\\William Zhang\\Documents\\NetBeansProjects\\ComputationalGeometry"));
+        newinputs.setInitialDirectory(new File("C:\\Users"));
         newinputs.setSelectedExtensionFilter(new ExtensionFilter("TxT files", "*.txt"));
           
           File fileinput = newinputs.showOpenDialog(null);
