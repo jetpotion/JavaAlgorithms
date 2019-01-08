@@ -142,10 +142,6 @@ public class GrahamScan extends Application {
 
         }
             final IntegerProperty i = new SimpleIntegerProperty(0);
-           
-           
-            
-        
             Timeline timeline = new Timeline(new KeyFrame(
              Duration.seconds(1),
                 event -> {
@@ -163,11 +159,6 @@ public class GrahamScan extends Application {
             );
             timeline.setCycleCount(Convexhull.size() - 1);
             timeline.play();
-        
-           
-            
-
-        
         Point2D lastpoint = Convexhull.lastElement();
         Point2D firstpoint = Convexhull.firstElement();
         Line hullline = new Line(lastpoint.getX(), lastpoint.getY(), firstpoint.getX(), firstpoint.getY());
@@ -178,20 +169,7 @@ public class GrahamScan extends Application {
         
         
         
-        for (Iterator<Node> it = pane.getChildren().iterator(); it.hasNext();) {
-            Node node = it.next();
-            if (node instanceof Circle) {
-                Circle circle = (Circle) node;
-                Point2D point = new Point2D(circle.getCenterX(), circle.getCenterY());
-                if (Convexhull.contains(point)) {
-                    Tooltip.install(circle, new Tooltip(point.toString() + "Convexhull status:True"));
-                    circle.setFill(Color.BLUE);
-                } else {
-                    Tooltip.install(circle, new Tooltip(point.toString() + "Convexhullstatus: False"));
-                }
-
-            }
-        }
+        determinePointOnHull(Convexhull,pane);
        
         String[] newconvexhull = new String [Convexhull.size()];
         int x = 0;
@@ -211,7 +189,9 @@ public class GrahamScan extends Application {
         return Convexhull;
 
     }
-
+    /**Gets the point next to the stack
+     * @param points The current points on the stack **/
+    
     public static Point2D nextoStack(Stack<Point2D> points) {
         Stack<Point2D> firststack = new Stack<>();
         firststack.addAll(points);
@@ -219,7 +199,28 @@ public class GrahamScan extends Application {
         return firststack.peek();
 
     } 
-    
+    /** This method checks if point is on the hull and mark it blue but this will not affect the run time as this is just 
+     * a method checker to see the points on the screen
+     * @param Convexhull is the current Convexhull 
+     * @param pane is the group that the points are being add too **/ 
+    public static void determinePointOnHull(Stack<Point2D>Convexhull, Group pane)
+    {
+         for (Iterator<Node> it = pane.getChildren().iterator(); it.hasNext();) {
+            Node node = it.next();
+            if (node instanceof Circle) {
+                Circle circle = (Circle) node;
+                Point2D point = new Point2D(circle.getCenterX(), circle.getCenterY());
+                if (Convexhull.contains(point)) {
+                    Tooltip.install(circle, new Tooltip(point.toString() + "Convexhull status:True"));
+                    circle.setFill(Color.BLUE);
+                } else {
+                    Tooltip.install(circle, new Tooltip(point.toString() + "Convexhullstatus: False"));
+                    circle.setFill(Color.RED);
+                }
+
+            }
+        }
+    }
 
     /**
      * @param a is the point next to stack 
@@ -396,7 +397,7 @@ public class GrahamScan extends Application {
         fade.setFromValue(0.0);
         fade.setToValue(1.0);
         fade.setAutoReverse(true);
-        
+    
         fade.play();
          
     }
