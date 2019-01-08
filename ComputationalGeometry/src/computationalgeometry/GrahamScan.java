@@ -15,7 +15,11 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -137,24 +141,38 @@ public class GrahamScan extends Application {
             }
 
         }
-        for (int x = 0; x < Convexhull.size() - 1; x++) {
-            Point2D startingpoint = Convexhull.get(x);
-            Point2D endingpoint = Convexhull.get(x + 1);
-
-            Line convexhullline = new Line(startingpoint.getX(), startingpoint.getY(), endingpoint.getX(), endingpoint.getY());
-            convexhullline.setStroke(Color.RED);
-            slowlyadd(convexhullline);
-            pane.getChildren().add(convexhullline);
+            final IntegerProperty i = new SimpleIntegerProperty(0);
            
            
             
+        
+            Timeline timeline = new Timeline(new KeyFrame(
+             Duration.seconds(1),
+                event -> {
+            Point2D startingpoint = Convexhull.get(i.get());
+            Point2D endingpoint = Convexhull.get(i.get() + 1);
 
-        }
+            Line convexhullline = new Line(startingpoint.getX(), startingpoint.getY(), endingpoint.getX(), endingpoint.getY());
+            convexhullline.setStroke(Color.RED);
+             pane.getChildren().add(convexhullline);
+             i.set(i.get()+1);
+         
+            
+                     } 
+                )
+            );
+            timeline.setCycleCount(Convexhull.size() - 1);
+            timeline.play();
+        
+           
+            
+
+        
         Point2D lastpoint = Convexhull.lastElement();
         Point2D firstpoint = Convexhull.firstElement();
-        Line convexhullline = new Line(lastpoint.getX(), lastpoint.getY(), firstpoint.getX(), firstpoint.getY());
-        convexhullline.setStroke(Color.RED);
-        pane.getChildren().add(convexhullline);
+        Line hullline = new Line(lastpoint.getX(), lastpoint.getY(), firstpoint.getX(), firstpoint.getY());
+        hullline.setStroke(Color.RED);
+        pane.getChildren().add(hullline);
         
         
         
