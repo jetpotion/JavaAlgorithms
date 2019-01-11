@@ -111,55 +111,70 @@ public class GrahamScan extends Application {
         Stack<Point2D> Convexhull = new Stack<>();
         Convexhull.push(points[0]);
         Convexhull.push(points[1]);
+        Point2D firstPoint = Convexhull.firstElement();
+        Point2D secondPoint  = Convexhull.lastElement();
+        Line firstline = new Line(firstPoint.getX(),firstPoint.getY(),secondPoint.getX(),secondPoint.getY());
+        firstline.setStroke(Color.RED);
+        pane.getChildren().add(firstline);
+        
                 
         int y = 2;
         //What if the first 3 points are colinear
         if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[2]) == 0) {
-            Convexhull.pop();
-            Convexhull.push(points[2]);
+           Point2D removedPoint =  Convexhull.pop();
+           Point2D previousPoint = Convexhull.peek();
+           Line line = new Line(previousPoint.getX(),previousPoint.getY(),removedPoint.getX(),removedPoint.getY());
+           slowlyremovelines(line,pane);
+           Point2D addedPoint = points[2];
+            Convexhull.push(addedPoint);
+            onelineadd(pane,previousPoint,addedPoint);
             y++;
-        //incase in the fact that the 3rd point is collinear
+        //incase in the fact that the 3rd point is counter clock wise
         } else if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[2]) < 0) {
             y++;
         }
         //case in the fact the third point is a point on the convexhull
         else {
             Convexhull.push(points[2]);
+            onelineadd(pane,nextoStack(Convexhull), Convexhull.peek());
+            determinePointOnHull(Convexhull,pane);
             y++;
         }
         for (int x = y; x < points.length; x++) {
-            //   System.out.println(x + " " + Convexhull.toString());
+          
             while (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) < 0) {
-                Convexhull.pop();
+                Point2D removed = Convexhull.pop();
+                Point2D previousPoint = Convexhull.peek();
+                Line line = new Line(previousPoint.getX(),previousPoint.getY(), removed.getX(),removed.getY());
+                slowlyremovelines(line,pane);
                  determinePointOnHull(Convexhull,pane);
                 
             }
             if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) == 0) {
-                Convexhull.pop();
-                Convexhull.push(points[x]);
+                Point2D removedPoint =  Convexhull.pop();
+                Point2D previousPoint = Convexhull.peek();
+                Line line = new Line(previousPoint.getX(),previousPoint.getY(),removedPoint.getX(),removedPoint.getY());
+                 slowlyremovelines(line,pane);
+                Point2D addedPoint = points[x];
+                Convexhull.push(addedPoint);
+                onelineadd(pane,previousPoint,addedPoint);
+              
                  determinePointOnHull(Convexhull,pane);
             } else if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) == 1) {
                 Convexhull.push(points[x]);
+                onelineadd(pane,nextoStack(Convexhull),Convexhull.peek());
                 determinePointOnHull(Convexhull,pane);
             }
 
         }
-            final IntegerProperty i = new SimpleIntegerProperty(0);
-            Timeline timeline = new Timeline(new KeyFrame(
-             Duration.millis(500),
-                event -> {
-            Point2D startingpoint = Convexhull.get(i.get());
-            Point2D endingpoint = Convexhull.get(i.get() + 1);
-
-            Line convexhullline = new Line(startingpoint.getX(), startingpoint.getY(), endingpoint.getX(), endingpoint.getY());
-            convexhullline.setStroke(Color.RED);
-             pane.getChildren().add(convexhullline);
-             i.set(i.get()+1);
-                     } 
-                )
-            );
-            timeline.setCycleCount(Convexhull.size() - 1);
-            timeline.play();
+  
+            
+            
+            
+            
+            
+            
+            
             Point2D lastpoint = Convexhull.lastElement();
             Point2D firstpoint = Convexhull.firstElement();
             Line hullline = new Line(lastpoint.getX(), lastpoint.getY(), firstpoint.getX(), firstpoint.getY());
@@ -200,6 +215,29 @@ public class GrahamScan extends Application {
         return firststack.peek();
 
     } 
+    /**
+     * This method make sures that the line is being removed slowly
+     * @param line the line to which we are removing from
+     * @param Pane the group pane that we are removing from
+     */
+    public static void slowlyremovelines(Line line, Group Pane)
+    {
+            if(Pane.getChildren().contains(line))
+            {
+                Timeline timeline = new Timeline(new KeyFrame(
+             Duration.millis(500),
+                event -> {
+            
+             Pane.getChildren().remove(line);
+            
+                     } 
+                )
+            ); 
+            timeline.play();
+            timeline.setOnFinished((event) ->timeline.play());
+    
+            }
+    }
     /** This method checks if point is on the hull and mark it blue but this will not affect the run time as this is just 
      * a method checker to see the points on the screen
      * @param Convexhull is the current Convexhull 
@@ -214,12 +252,15 @@ public class GrahamScan extends Application {
                 if (Convexhull.contains(point)) {
                     Tooltip.install(circle, new Tooltip(point.toString() + "Convexhull status:True"));
                     circle.setFill(Color.BLUE);
-                } else {
+                } 
+                else {
                     Tooltip.install(circle, new Tooltip(point.toString() + "Convexhullstatus: False"));
                     circle.setFill(Color.RED);
                 }
 
             }
+            
+            
         }
     }
 
@@ -390,16 +431,24 @@ public class GrahamScan extends Application {
           
     }
     }
-    public static void  slowlyadd(final Node Line) throws InterruptedException
+   
+    public static void onelineadd(Group pane,Point2D startingpoint,Point2D endingpoint)
     {
-        final FadeTransition fade = new FadeTransition( Duration.millis(3000));
-        
-        fade.setNode(Line);
-        fade.setFromValue(0.0);
-        fade.setToValue(1.0);
-        fade.setAutoReverse(true);
-    
-        fade.play();
-         
+      
+  
+            Timeline timeline = new Timeline(new KeyFrame(
+             Duration.millis(500),
+                event -> {
+
+            Line convexhullline = new Line(startingpoint.getX(), startingpoint.getY(), endingpoint.getX(), endingpoint.getY());
+            convexhullline.setStroke(Color.RED);
+             pane.getChildren().add(convexhullline);
+            
+                     } 
+                )
+            ); 
+            timeline.play();
+            timeline.setOnFinished((event) ->timeline.play());
     }
+   
 }
