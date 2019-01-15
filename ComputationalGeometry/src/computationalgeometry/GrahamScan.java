@@ -14,9 +14,12 @@ import java.util.Scanner;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -124,7 +127,7 @@ public class GrahamScan extends Application {
            slowlyremovelines(line,pane);
            Point2D addedPoint = points[2];
             Convexhull.push(addedPoint);
-            onelineadd(pane,Convexhull,previousPoint,addedPoint);
+            onelineadd(pane,previousPoint,addedPoint);
             y++;
         //incase in the fact that the 3rd point is counter clock wise
         } else if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[2]) < 0) {
@@ -133,7 +136,7 @@ public class GrahamScan extends Application {
         //case in the fact the third point is a point on the convexhull
         else {
             Convexhull.push(points[2]);
-            onelineadd(pane,Convexhull,nextoStack(Convexhull), Convexhull.peek());
+            onelineadd(pane,nextoStack(Convexhull), Convexhull.peek());
             determinePointOnHull(Convexhull,pane);
             y++;
         }
@@ -151,16 +154,16 @@ public class GrahamScan extends Application {
                 Point2D removedPoint =  Convexhull.pop();
                 Point2D previousPoint = Convexhull.peek();
                 Line line = new Line(previousPoint.getX(),previousPoint.getY(),removedPoint.getX(),removedPoint.getY());
-                 slowlyremovelines(line,pane);
+                slowlyremovelines(line,pane);
                 Point2D addedPoint = points[x];
                 Convexhull.push(addedPoint);
-         
+                onelineadd(pane,previousPoint,addedPoint);
               
                  determinePointOnHull(Convexhull,pane);
             } else if (orientation(nextoStack(Convexhull), Convexhull.peek(), points[x]) == 1) {
                 Convexhull.push(points[x]);
-                onelineadd(pane,Convexhull,nextoStack(Convexhull),Convexhull.peek());
-               
+                onelineadd(pane,nextoStack(Convexhull),Convexhull.peek());
+                determinePointOnHull(Convexhull,pane);
             }
 
         }
@@ -429,7 +432,7 @@ public class GrahamScan extends Application {
     }
     }
    
-    public static void onelineadd(Group pane,Stack<Point2D>convexhull,Point2D startingpoint,Point2D endingpoint)
+    public static void onelineadd(Group pane,Point2D startingpoint,Point2D endingpoint)
     {
       
   
