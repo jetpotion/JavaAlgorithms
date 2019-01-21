@@ -46,6 +46,11 @@ public class MinpriorityQueue < T  extends Comparable<T>> {
       heap = (Item []) new Comparable[heap.length * 2];
       System.arraycopy(old, 1, heap, 1, size);
    }
+     /** insert(T type,int priority) is the method where we insert objects into the array.
+      * 
+      * @param type the object itself
+      * @param priority for which the item itself is inserted
+      */
     public void insert(T type,int priority)
     {
          Item x = new Item(type,priority);
@@ -60,6 +65,26 @@ public class MinpriorityQueue < T  extends Comparable<T>> {
 
          heap[pos] = x;
     }
+    private void percolatingDown(int k)
+   {
+      Item tmp = heap[k];
+      int leftchild;
+
+      for(; 2*k <= size; k = leftchild)
+      {
+         leftchild = 2*k;
+        int  rightchild = 2*k + 1;
+         if(leftchild != size &&  heap[leftchild].getPriority()  > heap[rightchild].getPriority())
+             leftchild++;
+
+         if(tmp.getPriority() > heap[leftchild].getPriority())
+             heap[k] = heap[leftchild];
+         else
+                break;
+      }
+      heap[k] = tmp;
+   }
+
   
     
 }
