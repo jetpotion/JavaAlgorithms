@@ -5,8 +5,11 @@
  */
 package DataStructures;
 
+import java.util.Arrays;
+
 /**
- * A minpriority queue is a priority queue  that perform heap operation.  The heap acts like a abstract idea but we do not  choose to use the heap itself
+ * A minpriority queue is a priority queue  that perform heap operation.
+ * The heap acts like a abstract idea but we do not  choose to use the heap itself.
  * @author William Zhang
  * Type can extend any comparable type
  */
@@ -18,7 +21,7 @@ public class MinpriorityQueue < T  extends Comparable<T>> {
      */
     private Item [] heap;
     private int size;
-    class  Item
+    class  Item implements Comparable
     {
         private T item;
         private int priority;
@@ -31,6 +34,24 @@ public class MinpriorityQueue < T  extends Comparable<T>> {
         {
             return this.priority;
         }
+
+        @Override
+        public int compareTo(Object mon) {
+           Item item = (Item)mon;
+          if(this.priority < item.getPriority())
+          {
+              return -1;
+          }
+          else if(this.priority > item.getPriority())
+          {
+              return 1;
+          }
+          else
+          {
+              return 0;
+          }
+        }
+        
     }
     /** Construct  a empty priority queue **/
     public MinpriorityQueue()
@@ -84,7 +105,60 @@ public class MinpriorityQueue < T  extends Comparable<T>> {
       }
       heap[k] = tmp;
    }
-
+    /** extracts the item with minimum priority ** 
+     * 
+     * @return
+     * @throws RuntimeException 
+     */
+    public Item deleteMin() throws RuntimeException
+   {
+      if (size == 0) throw new RuntimeException("This is  empty heap");
+      Item min = heap[1];
+      heap[1] = heap[size--];
+      percolatingDown(1);
+      return min;
+              }
   
-    
+     public void ChangeKey(Item oldkey, Item newKey)
+   {
+        
+       /** standard binary search   of oldkey to check to see if the index exist otherwise**/
+         int  i = Arrays.binarySearch(heap,oldkey);
+         if(i < size || i > 0)
+         {
+             /** Check to see if the value  of newkey is less than the newkey **/
+             if(oldkey.compareTo(newKey) > 0)
+             {
+                  if(i == 1)
+                      /** if old value was in the root and value was even less than this is the new global minimum **/
+                      heap[i] = newKey;
+                  /**All we need to do is percolate up to restore heap**/
+                  else 
+                  {
+                      heap[i] = newKey;
+                      for(; i > 1 && heap[i].compareTo(heap[i/2])< 0; i= i/2)
+                      {
+                          heap[i] =  heap[i/2];
+                      }
+                  }
+             }
+              /**This is accounting for the value of the newkey is greater than the oldkey **/
+             else 
+             {
+                 if(i == 1)
+                 {   heap[i] = newKey; 
+                     percolatingDown(1);}
+                 else 
+                 {
+                     heap[i] = newKey;
+                     percolatingDown(i);
+                 }
+             }
+  
+         }
+         else 
+         {
+             throw new IndexOutOfBoundsException("Oldkey does not exist ");
+         }
+   }
 }
