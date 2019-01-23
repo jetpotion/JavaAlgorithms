@@ -7,6 +7,7 @@ package DataStructures;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  *
@@ -45,5 +46,17 @@ public class UnionFind{
             return find(data.getParent());
        }
    }
+   public boolean equals(Object obj)
+   {
+       return this.Data == ((UnionFind)obj).getData();
+   }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.parent);
+        hash = 67 * hash + Objects.hashCode(this.Data);
+        return hash;
+    }
   
 }
