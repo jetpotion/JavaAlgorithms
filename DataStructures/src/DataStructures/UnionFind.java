@@ -24,6 +24,7 @@ public class UnionFind  <V extends Comparable<V>>
        rank = 1;
        
     }
+  
     public V find()
     {
         return set.getFirst();
@@ -43,6 +44,10 @@ public class UnionFind  <V extends Comparable<V>>
             return false;
         }
     }
+    public LinkedList<V> returnset()
+    {
+        return set;
+    }
     public static UnionFind union(UnionFind tree1,UnionFind tree2)
     {
         /** This is assuming this is part of the same set because are checking if they are same parent**/
@@ -57,11 +62,14 @@ public class UnionFind  <V extends Comparable<V>>
             /**Since ranks are equal **/
             if(rankone == ranktwo)
             {
-                
+                tree2.returnset().offerFirst(tree1.find());
+                tree2.setRank(tree2.getRank()+1);
+                return tree2;
             }
             else if(rankone > ranktwo)
             {
-                
+                tree1.returnset().offerFirst(tree2.find());
+                tree1.setRank(tree1.getRank() +1);
             }
             else
             {
@@ -87,5 +95,10 @@ public class UnionFind  <V extends Comparable<V>>
     private int getRank()
     {
         return rank;
+    }
+    public void setRank(int v)
+           
+    {
+        this.rank= v;
     }
 }
