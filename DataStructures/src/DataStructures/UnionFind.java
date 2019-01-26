@@ -12,51 +12,80 @@ import java.util.Objects;
 /**
  *
  * @author William Zhang
+ * @param <V> Any type
  */
-public class UnionFind{
-  
-   private UnionFind parent;
-   private Vertex Data;
-   public UnionFind()
-   {
+public class UnionFind  <V extends Comparable<V>>
+{
+    private LinkedList<V> set;
+    private int rank;
+    public UnionFind(V item)
+    {
+       this.set = new LinkedList<V>(Arrays.asList(set));
+       rank = 1;
        
-   }
-   
-   public UnionFind (Vertex X)
-   {
-       parent =  new UnionFind();
-       Data = X;
-   }
-   public UnionFind getParent()
-   {
-       return parent;
-   }
-   public Vertex getData()
-   {
-       return Data   ;
-   }
-   public Vertex find(UnionFind data)
-   {
-       if(Data.equals(data.getData()))
-       {
-           return Data;
-       }
-       else
-       {
-            return find(data.getParent());
-       }
-   }
-   public boolean equals(Object obj)
-   {
-       return this.Data == ((UnionFind)obj).getData();
-   }
+    }
+    public V find()
+    {
+        return set.getFirst();
+    }
+    @Override
+    public boolean equals(Object unionfind)
+    {
+        if(unionfind instanceof UnionFind)
+        {
+            UnionFind  translated= (UnionFind)unionfind;
+            V finding = this.find();
+            V  type = (V)   translated.find();
+            return  finding.compareTo(type) == 1;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public static UnionFind union(UnionFind tree1,UnionFind tree2)
+    {
+        /** This is assuming this is part of the same set because are checking if they are same parent**/
+        if(tree1.equals(tree2))
+        {
+            return tree1;
+        }
+        else
+        {
+            int rankone = tree1.getRank();
+            int ranktwo = tree2.getRank();
+            /**Since ranks are equal **/
+            if(rankone == ranktwo)
+            {
+                
+            }
+            else if(rankone > ranktwo)
+            {
+                
+            }
+            else
+            {
+                
+            }
+            
+        }
+        return null;
+    }
+    public UnionFind makeset(V v)
+    {
+        return new UnionFind(v);
+    }
+    
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.parent);
-        hash = 67 * hash + Objects.hashCode(this.Data);
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.set);
+        hash = 79 * hash + this.rank;
         return hash;
     }
-  
+    private int getRank()
+    {
+        return rank;
+    }
 }
